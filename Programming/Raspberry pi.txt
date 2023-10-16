@@ -1,0 +1,51 @@
+import serial
+import time
+import curses
+
+# Establish serial communication with Arduino 1
+ser1 = serial.Serial('/dev/ttyUSB0', 9600)  # Replace '/dev/ttyUSB0' with the serial port of Arduino 1
+time.sleep(2)  # Allow time for the connection to establish
+
+# Establish serial communication with Arduino 2
+ser2 = serial.Serial('/dev/ttyUSB1', 9600)  # Replace '/dev/ttyUSB1' with the serial port of Arduino 2
+time.sleep(2)  # Allow time for the connection to establish
+
+# Initialize curses
+stdscr = curses.initscr()
+curses.cbreak()
+stdscr.keypad(True)
+
+# Main loop
+while True:
+    # Get keyboard input
+    key = stdscr.getch()
+
+    # Check which key was pressed
+    if key == ord('w') or key == ord('W'):
+        ser1.write(b'w')  # Send '1' to Arduino for upward
+    elif key == ord('a'):
+        ser1.write(b'a')  # Send '2' to Arduino for left
+    elif key == ord('s'):
+        ser1.write(b's')  # Send '3' to Arduino for down
+    elif key == ord('d'):
+        ser1.write(b'd')  # Send '4' to Arduino for right
+    elif key == ord('i'):
+        ser2.write(b'w')  # Send '1' to Arduino for upward
+    elif key == ord('j'):
+        ser2.write(b'a')  # Send '2' to Arduino for left
+    elif key == ord('k'):
+        ser2.write(b's')  # Send '3' to Arduino for down
+    elif key == ord('l'):
+        ser2.write(b'd')  # Send '4' to Arduino for right
+    elif key == 27:  # ESC key
+        break
+
+# Restore terminal settings
+curses.nocbreak()
+stdscr.keypad(False)
+curses.echo()
+curses.endwin()
+
+# Close the serial connections
+ser1.close()
+ser2.close()
